@@ -1,1 +1,25 @@
-{"expo":{"name":"MARKETPLACE_APP","slug":"marketplace-app","version":"0.1.0","orientation":"portrait","scheme":"marketplace","userInterfaceStyle":"automatic","newArchEnabled":true,"plugins":["expo-router"],"ios":{"supportsTablet":true,"bundleIdentifier":"com.example.marketplace"},"android":{"package":"com.example.marketplace"},"experiments":{"typedRoutes":true}}}
+{
+  "expo": {
+    "name": "ARMZON",
+    "slug": "armzon",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "armzon",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "plugins": [
+      "expo-router",
+      "expo-status-bar"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.armzon.app"
+    },
+    "android": {
+      "package": "com.armzon.app"
+    },
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}
