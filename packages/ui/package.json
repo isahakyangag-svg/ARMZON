@@ -1,0 +1,1 @@
+{"name":"@marketplace/ui","version":"0.1.0","private":true,"type":"module","exports":{".":"./src/index.tsx"},"scripts":{"build":"tsc --noEmit","lint":"eslint .","typecheck":"tsc --noEmit"},"peerDependencies":{"react":"^19.2.4"},"devDependencies":{"@types/react":"^19.0.0","react":"^19.2.4","typescript":"^5.9.0"}}

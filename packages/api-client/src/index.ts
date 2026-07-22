@@ -1,0 +1,2 @@
+export type ApiClientOptions = { baseUrl: string; getAccessToken?: () => Promise<string | null> };
+export function createApiClient(options: ApiClientOptions) { return { async get(path: string): Promise<unknown> { const token = await options.getAccessToken?.(); const init: RequestInit = token ? { headers: { authorization: `Bearer ${token}` } } : {}; const response = await fetch(new URL(path, options.baseUrl), init); if (!response.ok) throw new Error(`API request failed: ${response.status}`); return response.json() as Promise<unknown>; } }; }
