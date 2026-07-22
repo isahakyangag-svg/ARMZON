@@ -23,6 +23,24 @@ enum UserStatus {
   DELETED
 }
 
+enum AttributeType {
+  TEXT
+  TEXTAREA
+  NUMBER
+  DECIMAL
+  BOOLEAN
+  SINGLE_SELECT
+  MULTI_SELECT
+  DATE
+  YEAR
+  COLOR
+  RANGE
+  LOCATION
+  FILE
+  BRAND
+  MODEL
+}
+
 model User {
   id                  String                   @id @default(uuid()) @db.Uuid
   email               String                   @unique
@@ -179,4 +197,217 @@ model AuditLog {
   @@index([actorId, createdAt])
   @@index([action, createdAt])
   @@index([entityType, entityId])
+}
+
+model Category {
+  id                    String                @id @default(uuid()) @db.Uuid
+  parentId              String?               @db.Uuid
+  slug                  String                @unique
+  icon                  String?
+  imageId               String?               @db.Uuid
+  sortOrder             Int                   @default(0)
+  isActive              Boolean               @default(true)
+  isFeatured            Boolean               @default(false)
+  requiresModeration    Boolean               @default(false)
+  listingLifetimeDays   Int?
+  seoTitle              String?
+  seoDescription        String?
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  deletedAt             DateTime?
+  parent                Category?             @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Restrict)
+  children              Category[]            @relation("CategoryTree")
+  translations          CategoryTranslation[]
+  attributes            CategoryAttribute[]
+  brands                CategoryBrand[]
+
+  @@index([parentId, sortOrder])
+  @@index([isActive, deletedAt])
+}
+
+model CategoryTranslation {
+  id             String   @id @default(uuid()) @db.Uuid
+  categoryId     String   @db.Uuid
+  locale         String
+  name           String
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  deletedAt      DateTime?
+  category       Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, locale])
+  @@index([locale, name])
+  @@index([deletedAt])
+}
+
+model AttributeDefinition {
+  id                   String                 @id @default(uuid()) @db.Uuid
+  key                  String                 @unique
+  type                 AttributeType
+  required             Boolean                @default(false)
+  filterable           Boolean                @default(false)
+  searchable           Boolean                @default(false)
+  showInCard           Boolean                @default(false)
+  showInDetails        Boolean                @default(true)
+  sortOrder            Int                    @default(0)
+  minValue             Decimal?               @db.Decimal(18, 4)
+  maxValue             Decimal?               @db.Decimal(18, 4)
+  minLength            Int?
+  maxLength            Int?
+  regex                String?
+  defaultValue         Json?
+  dependsOnAttributeId String?                 @db.Uuid
+  isActive             Boolean                @default(true)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  deletedAt            DateTime?
+  dependsOn            AttributeDefinition?   @relation("AttributeDependency", fields: [dependsOnAttributeId], references: [id], onDelete: SetNull)
+  dependents           AttributeDefinition[]  @relation("AttributeDependency")
+  translations         AttributeTranslation[]
+  options              AttributeOption[]
+  categories           CategoryAttribute[]
+
+  @@index([type, isActive, deletedAt])
+  @@index([dependsOnAttributeId])
+}
+
+model AttributeTranslation {
+  id          String              @id @default(uuid()) @db.Uuid
+  attributeId String              @db.Uuid
+  locale      String
+  label       String
+  description String?
+  unit        String?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  deletedAt   DateTime?
+  attribute   AttributeDefinition @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+  @@unique([attributeId, locale])
+  @@index([locale, label])
+}
+
+model AttributeOption {
+  id           String                       @id @default(uuid()) @db.Uuid
+  attributeId  String                       @db.Uuid
+  value        String
+  colorHex     String?
+  sortOrder    Int                          @default(0)
+  isActive     Boolean                      @default(true)
+  createdAt    DateTime                     @default(now())
+  updatedAt    DateTime                     @updatedAt
+  deletedAt    DateTime?
+  attribute    AttributeDefinition          @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  translations AttributeOptionTranslation[]
+
+  @@unique([attributeId, value])
+  @@index([attributeId, sortOrder])
+}
+
+model AttributeOptionTranslation {
+  id        String          @id @default(uuid()) @db.Uuid
+  optionId  String          @db.Uuid
+  locale    String
+  label     String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  deletedAt DateTime?
+  option    AttributeOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@unique([optionId, locale])
+  @@index([locale, label])
+}
+
+model CategoryAttribute {
+  id          String              @id @default(uuid()) @db.Uuid
+  categoryId  String              @db.Uuid
+  attributeId String              @db.Uuid
+  required    Boolean?
+  sortOrder   Int                 @default(0)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  deletedAt   DateTime?
+  category    Category            @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  attribute   AttributeDefinition @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, attributeId])
+  @@index([attributeId])
+  @@index([categoryId, sortOrder])
+}
+
+model Brand {
+  id           String             @id @default(uuid()) @db.Uuid
+  slug         String             @unique
+  logoId       String?            @db.Uuid
+  sortOrder    Int                @default(0)
+  isActive     Boolean            @default(true)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  deletedAt    DateTime?
+  translations BrandTranslation[]
+  models       BrandModel[]
+  categories   CategoryBrand[]
+
+  @@index([isActive, deletedAt])
+}
+
+model BrandTranslation {
+  id        String   @id @default(uuid()) @db.Uuid
+  brandId   String   @db.Uuid
+  locale    String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  brand     Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@unique([brandId, locale])
+  @@index([locale, name])
+}
+
+model BrandModel {
+  id           String                  @id @default(uuid()) @db.Uuid
+  brandId      String                  @db.Uuid
+  slug         String
+  sortOrder    Int                     @default(0)
+  isActive     Boolean                 @default(true)
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+  deletedAt    DateTime?
+  brand        Brand                   @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  translations BrandModelTranslation[]
+
+  @@unique([brandId, slug])
+  @@index([brandId, sortOrder])
+}
+
+model BrandModelTranslation {
+  id        String     @id @default(uuid()) @db.Uuid
+  modelId   String     @db.Uuid
+  locale    String
+  name      String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  deletedAt DateTime?
+  model     BrandModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@unique([modelId, locale])
+  @@index([locale, name])
+}
+
+model CategoryBrand {
+  id        String   @id @default(uuid()) @db.Uuid
+  categoryId String  @db.Uuid
+  brandId   String   @db.Uuid
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  category  Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  brand     Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, brandId])
+  @@index([brandId])
 }

@@ -3,6 +3,7 @@ import * as argon2 from 'argon2';
 import { PrismaClient } from '../src/generated/prisma/client.js';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PERMISSION_NAMES, ROLE_NAMES } from './rbac.constants.js';
+import { seedCatalog } from './catalog.seed.js';
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) throw new Error('DATABASE_URL is required');
@@ -12,10 +13,11 @@ async function seed(): Promise<void> {
   for (const name of PERMISSION_NAMES) { const permission = await prisma.permission.upsert({ where: { name }, update: { deletedAt: null }, create: { name } }); permissions.set(name, permission.id); }
   for (const name of ROLE_NAMES) {
     const role = await prisma.role.upsert({ where: { name }, update: { deletedAt: null }, create: { name } });
-    const granted = name === 'OWNER' || name === 'ADMIN' ? PERMISSION_NAMES : name === 'MODERATOR' ? ['users.read', 'users.update', 'users.block', 'audit.read'] : name === 'SUPPORT' ? ['users.read', 'users.update'] : [];
+    const granted = name === 'OWNER' || name === 'ADMIN' ? PERMISSION_NAMES : name === 'MODERATOR' ? ['users.read', 'users.update', 'users.block', 'audit.read', 'categories.read'] : name === 'SUPPORT' ? ['users.read', 'users.update', 'categories.read'] : ['categories.read'];
     for (const permissionName of granted) { const permissionId = permissions.get(permissionName); if (!permissionId) throw new Error(`Missing permission: ${permissionName}`); await prisma.rolePermission.upsert({ where: { roleId_permissionId: { roleId: role.id, permissionId } }, update: { deletedAt: null }, create: { roleId: role.id, permissionId } }); }
   }
   const email = process.env.OWNER_EMAIL?.trim().toLowerCase(); const password = process.env.OWNER_PASSWORD;
+  const stats = await seedCatalog(prisma); console.log(`Catalog import: ${stats.categories} categories, ${stats.translations} translations, ${stats.attributes} attributes, ${stats.brands} brands`);
   if (!email || !password) { console.warn('OWNER_EMAIL/OWNER_PASSWORD not set; development OWNER was not created'); return; }
   const ownerRole = await prisma.role.findUniqueOrThrow({ where: { name: 'OWNER' } });
   const owner = await prisma.user.upsert({ where: { normalizedEmail: email }, update: { email, deletedAt: null, status: 'ACTIVE', emailVerifiedAt: new Date() }, create: { email, normalizedEmail: email, passwordHash: await argon2.hash(password), status: 'ACTIVE', emailVerifiedAt: new Date(), profile: { create: { firstName: process.env.OWNER_FIRST_NAME ?? 'Development', lastName: process.env.OWNER_LAST_NAME ?? 'Owner' } } } });

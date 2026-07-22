@@ -8,7 +8,7 @@ async function bootstrap(): Promise<void> {
   app.setGlobalPrefix('api/v1');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true, exceptionFactory: (errors) => new BadRequestException({ message: 'Validation failed', errors: errors.map((error) => ({ field: error.property, messages: Object.values(error.constraints ?? {}) })) }) }));
   app.enableCors({ origin: ['http://localhost:3000', 'http://localhost:3001'], credentials: true });
-  const document = SwaggerModule.createDocument(app, new DocumentBuilder().setTitle('ARMZON API').setDescription('ARMZON authentication and user API').setVersion('1.0').addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }).build());
+  const document = SwaggerModule.createDocument(app, new DocumentBuilder().setTitle('ARMZON API').setDescription('ARMZON authentication, users and catalog API').setVersion('1.0').addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }).build());
   SwaggerModule.setup('docs', app, document);
   await app.listen(Number(process.env.API_PORT ?? 4000));
 }
