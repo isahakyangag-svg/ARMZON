@@ -13,7 +13,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:generate": "npm run db:generate --workspace=@marketplace/api",
-    "db:migrate": "npm run db:migrate --workspace=@marketplace/api"
+    "db:migrate": "npm run db:migrate --workspace=@marketplace/api",
+    "db:seed": "npm run db:seed --workspace=@marketplace/api",
+    "test": "npm run test --workspace=@marketplace/api"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

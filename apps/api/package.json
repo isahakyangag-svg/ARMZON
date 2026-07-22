@@ -1,1 +1,72 @@
-{"name":"@marketplace/api","version":"0.1.0","private":true,"scripts":{"dev":"nest start --watch","build":"nest build","start":"node dist/main.js","lint":"eslint .","typecheck":"tsc --noEmit","db:generate":"prisma generate","db:migrate":"prisma migrate dev"},"dependencies":{"@marketplace/types":"*","@nestjs/common":"^11.0.0","@nestjs/core":"^11.0.0","@nestjs/platform-express":"^11.0.0","@nestjs/swagger":"^11.0.0","@prisma/client":"^7.0.0","reflect-metadata":"^0.2.2","rxjs":"^7.8.0"},"devDependencies":{"@nestjs/cli":"^11.0.0","@types/node":"^24.0.0","prisma":"^7.0.0","typescript":"^5.9.0"}}
+{
+  "name": "@marketplace/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nest start --watch",
+    "build": "nest build",
+    "start": "node dist/src/main.js",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js --runInBand",
+    "test:integration": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js --runInBand --testPathPatterns=integration",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@marketplace/types": "*",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/jwt": "^11.0.0",
+    "@nestjs/platform-express": "^11.0.0",
+    "@nestjs/swagger": "^11.0.0",
+    "@nestjs/throttler": "^6.4.0",
+    "@prisma/adapter-pg": "^7.0.0",
+    "@prisma/client": "^7.0.0",
+    "argon2": "^0.44.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.0"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.0",
+    "@nestjs/testing": "^11.0.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.0",
+    "@types/supertest": "^6.0.3",
+    "jest": "^30.0.0",
+    "prisma": "^7.0.0",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  },
+  "jest": {
+    "preset": "ts-jest/presets/default-esm",
+    "extensionsToTreatAsEsm": [".ts"],
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.ts$": ["ts-jest", { "useESM": true, "tsconfig": "<rootDir>/../tsconfig.json" }]
+    },
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1",
+      "^@marketplace/types$": "<rootDir>/../../../packages/types/src/index.ts"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "testTimeout": 30000
+  }
+}

@@ -1,0 +1,2 @@
+import { PERMISSION_NAMES, ROLE_NAMES } from '../prisma/rbac.constants.js';
+describe('RBAC seed definitions', () => { it('contains unique required roles and permissions', () => { expect(new Set(ROLE_NAMES).size).toBe(5); expect(ROLE_NAMES).toContain('OWNER'); expect(new Set(PERMISSION_NAMES).size).toBe(6); expect(PERMISSION_NAMES).toContain('roles.manage'); }); });
