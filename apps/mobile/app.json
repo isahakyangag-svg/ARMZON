@@ -8,8 +8,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "plugins": [
-      "expo-router",
-      "expo-status-bar"
+      "expo-router"
     ],
     "ios": {
       "supportsTablet": true,
@@ -19,7 +18,8 @@
       "package": "com.armzon.app"
     },
     "experiments": {
-      "typedRoutes": false
+      "typedRoutes": false,
+      "autolinkingModuleResolution": true
     }
   }
 }

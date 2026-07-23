@@ -5,28 +5,39 @@
   "main": "expo-router/entry",
   "scripts": {
     "dev": "expo start",
+    "start": "expo start",
+    "start:clear": "expo start --clear",
+    "start:lan": "expo start --clear --lan",
+    "start:tunnel": "expo start --clear --tunnel",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
     "build": "expo export --platform android && expo export --platform ios",
+    "build:android": "expo export --platform android",
+    "build:ios": "expo export --platform ios",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "android": "expo start --android",
-    "ios": "expo start --ios"
+    "doctor": "expo-doctor",
+    "dependencies:check": "expo install --check",
+    "dependencies:fix": "expo install --fix"
   },
   "dependencies": {
     "@marketplace/types": "*",
-    "expo": "^56.0.0",
-    "expo-constants": "~56.0.21",
-    "expo-linking": "~56.0.15",
-    "expo-router": "~56.2.15",
-    "expo-status-bar": "~56.0.4",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "react-native": "^0.85.0",
-    "react-native-safe-area-context": "~5.7.0",
-    "react-native-screens": "4.25.2",
-    "react-native-web": "^0.21.2"
+    "expo": "~54.0.36",
+    "expo-constants": "~18.0.13",
+    "expo-linking": "~8.0.12",
+    "expo-router": "~6.0.24",
+    "expo-status-bar": "~3.0.9",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-safe-area-context": "5.6.2",
+    "react-native-screens": "~4.16.0",
+    "react-native-web": "~0.21.2"
   },
-  "devDependencies": {
-    "@types/react": "^19.0.0",
-    "typescript": "~6.0.3"
-  }
+"devDependencies": {
+  "@types/react": "19.1.17",
+  "@types/react-dom": "19.1.11",
+  "typescript": "~5.9.2"
+}
 }
